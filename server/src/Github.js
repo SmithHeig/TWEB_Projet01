@@ -7,8 +7,8 @@ class ResponseError extends Error {
       this.path = res.url;
       this.body = body;
     }
-  }
-  
+}
+
 class Github {
     constructor({ token, baseUrl = 'https://api.github.com' } = {}) {
       this.token = token;
@@ -40,6 +40,7 @@ class Github {
           }));
     }
   
+    // probably useless
     user(username) {
       return this.request(`/users/${username}`);
     }
@@ -48,16 +49,16 @@ class Github {
       return this.request(`/users/${username}/repos`);
     }
   
-    repoLanguages(repoName) {
-      return this.request(`/repos/${repoName}/languages`);
+    repoContributors(repoName) {
+      return this.request(`/repos/${repoName}/contributors`);
     }
   
-    userLanguages(username) {
-      return this.repos(username)
-        .then((repos) => {
-          const getLanguages = repo => this.repoLanguages(repo.full_name);
-          return Promise.all(repos.map(getLanguages));
-        });
+    friends(username){
+        return this.repos(username)
+          .then((repos) => {
+            const getContributors = repo => this.repoContributors(repo.full_name);
+            return Promise.all(repos.map(getContributors));
+          });
     }
   }
   
