@@ -5,7 +5,7 @@ const utils = require('./src/utils');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const client = new Github({ token: process.env.OAUTH_TOKEN })
 
 app.use(cors());

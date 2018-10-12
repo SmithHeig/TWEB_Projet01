@@ -9,7 +9,7 @@ import Friends from "./components/Friends";
 
 const routing = (
   <Router>
-    <div>
+    <div className="App-body">
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/friends/:username" component={Friends} />
