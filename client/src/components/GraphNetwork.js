@@ -31,6 +31,12 @@ class GraphNetwork extends Component {
     super(props);
     this.node = null;
     this.link = null;
+    this.label = null;
+
+
+    this.state = {
+      minSize: this.props.height > this.props.width ? this.props.width : this.props.height
+    }
 
     this.dragstarted = this.dragstarted.bind(this);
     this.dragended = this.dragended.bind(this);
@@ -42,9 +48,9 @@ class GraphNetwork extends Component {
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
       //.force("charge", d3.forceManyBody().strength(-200))
       .force('charge', d3.forceManyBody()
-        .strength(-200)
+        .strength(-5000)
         .theta(0.8)
-        .distanceMax(150)
+        .distanceMax(this.state.minSize)
       )
   // 		.force('collide', d3.forceCollide()
   //       .radius(d => 40)
@@ -55,6 +61,7 @@ class GraphNetwork extends Component {
 
   createGraph(){
     if(this.props.graph){
+      let nodes = this.props.graph.nodes;
       console.log(this.props.graph);
       var g = d3.select("svg");
       // nodes
@@ -65,7 +72,7 @@ class GraphNetwork extends Component {
           .selectAll("circle")
           .data(this.props.graph.nodes)
           .enter().append("circle")
-          .attr("r", 10)
+          .attr("r", function(d, i){return nodes[i].value * 10;})
           .call(d3.drag()
             .on("start", this.dragstarted)
             .on("drag", this.dragged)
@@ -79,6 +86,15 @@ class GraphNetwork extends Component {
           .data(this.props.graph.links)
           .enter().append("line");
 
+      // labels
+      this.label = g.append("g")
+      .attr("class", "labels")
+      .selectAll("text")
+      .data(this.props.graph.nodes)
+      .enter().append("text")
+        .attr("class", "label")
+        .text(function(d) { return d.username; });
+      
       this.simulation
         .nodes(this.props.graph.nodes)
         .on("tick", this.ticked)
@@ -127,12 +143,16 @@ class GraphNetwork extends Component {
         .attr("y2", function(d) { return d.target.y; });
 
     this.node
-         .attr("r", 16)
          .style("fill", "#efefef")
          .style("stroke", "#424242")
          .style("stroke-width", "1px")
          .attr("cx", function (d) { return d.x+5; })
-         .attr("cy", function(d) { return d.y-3; });
+         .attr("cy", function(d) { return d.y-9; });
+
+    this.label
+      .attr("x", function(d) { return d.x; })
+          .attr("y", function (d) { return d.y; })
+          .style("font-size", "10px").style("fill", "#333");
   }
 
   render() {
@@ -143,8 +163,7 @@ class GraphNetwork extends Component {
         </svg>
       );
     } else {
-      let min = this.props.height > this.props.width ? this.props.width : this.props.height;
-      return <ReactLoading type="spin" width={min} height={min} color="#fff" />;
+      return <ReactLoading type="spin" width={this.state.minSize /2} height={this.state.minSize /2 } color="#fff" />;
     }
 
   }

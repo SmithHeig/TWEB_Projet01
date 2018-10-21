@@ -41,7 +41,7 @@ class Friends extends Component{
       
       nodes[index] = node;
 
-      if(node.username === username) usernameId = node.id;
+      if(node.username.toLowerCase() === username.toLowerCase()) usernameId = node.id;
 
       return nodes;
     });
@@ -54,7 +54,7 @@ class Friends extends Component{
         let link = {};
         link.source = usernameId;
         link.target = node.id;
-        link.value = 1;
+        link.value = 100;
         links[i++] = link
         return links;
       }
