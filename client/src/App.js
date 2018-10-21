@@ -4,6 +4,11 @@ import SearchField from './components/SearchField';
 
 class App extends Component {
 
+  constructor(props){
+    super(props);
+    this.ref = React.createRef();
+  }
+
   render() {
     return (
       <div className="App">

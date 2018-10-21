@@ -5,7 +5,6 @@ function getUserFriends(userContributors = [[]]){
       friends[values.login] !== undefined ? friends[values.login] += 1 : friends[values.login] = 1;
     });
   };
-  userContributors.forEach(countContribution);
   return friends;
 }
 

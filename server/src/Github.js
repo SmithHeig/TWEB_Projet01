@@ -56,9 +56,8 @@ class Github {
     friends(username){
         return this.repos(username)
           .then((repos) => {
-            console.log(repos);
             const getContributors = repo => this.repoContributors(repo.full_name);
-            return Promise.all(repos.map(getContributors));
+            return Promise.all(repos.filter(repo => repo.size).map(getContributors));
           });
     }
   }
