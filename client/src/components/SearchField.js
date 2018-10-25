@@ -34,7 +34,7 @@ class SearchUser extends React.Component {
                 onChange={this.handleChange}
             />
             <br/>
-            <Button id="searchButton" className="searchButton" variant="contained" color="primary" onClick={this.changeRoot}>
+            <Button type="submit" id="searchButton" className="searchButton" variant="contained" color="primary" onClick={this.changeRoot}>
               Search
             </Button>
         </form>

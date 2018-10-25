@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
 import GraphNetwork from './GraphNetwork';
+import Info from '@material-ui/icons/Info';
+import Search from '@material-ui/icons/Search';
+import { Tooltip, IconButton } from '@material-ui/core';
+import SearchField from './SearchField';
+import {Link} from 'react-router-dom';
+import "./Friends.css";
 
 class Friends extends Component{
   constructor({match},props){
@@ -7,12 +13,20 @@ class Friends extends Component{
     this.state = {
       username: match.params.username,
       collaborators: {},
-      graph: undefined
+      graph: undefined,
+      searchFieldVisibile: false
     }
 
     this.makeGraphFromData = this.makeGraphFromData.bind(this);
     this.fetchData = this.fetchData.bind(this);
     this.reload = this.reload.bind(this);
+    this.showSearchBar = this.showSearchBar.bind(this);
+
+    this.textInfo = `
+    That is the "friends" of ` + this.state.username + ` !
+    The size of the bubbles represent the number of repositories 
+    that this person had contribut to ` + this.state.username + ` repositories!
+    Click on a user to see his friends`;
   }
 
   componentDidMount(){
@@ -77,10 +91,22 @@ class Friends extends Component{
     return g;
   }
 
+  showSearchBar(){
+    this.setState({searchFieldVisibile: !this.state.searchFieldVisibile});
+  }
+
   render(){
     return (
       <div>
-        <h1>Friends</h1>
+        <div>
+          
+          <h1><Link to="/" id="link">Friends</Link>
+            <Tooltip title={this.textInfo} placement="bottum" className="info" ><IconButton style={{color: 'white'}}><Info id="info" /></IconButton></Tooltip>
+            <Tooltip title="New research"><IconButton style={{color: 'white'}} onClick={this.showSearchBar}><Search/></IconButton></Tooltip>
+          </h1>
+
+          {this.state.searchFieldVisibile ? <SearchField/>: null}
+        </div>
         <GraphNetwork
          width={window.innerWidth}
          height={window.innerHeight - 200}

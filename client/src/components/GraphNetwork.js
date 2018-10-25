@@ -46,12 +46,10 @@ class GraphNetwork extends Component {
     if(this.state.graph){
       const scaleY = 100;
       const sizeCercle = 10;
-      const width = this.props.width;
-      const height = this.props.height;
 
       let nodes = this.state.graph.nodes;
 
-      let g = d3.select("svg").append("g");
+      let g = d3.select("#svg").append("g");
 
       // links
       this.link = 
@@ -211,7 +209,7 @@ class GraphNetwork extends Component {
           <svg className="container" id="svg"
             width={this.props.width} height={this.props.height}>
           </svg>
-          <div id="tooltip" class="hidden">
+          <div id="tooltip" className="hidden">
             <b><p id="value">1</p></b>
           </div>
         </div>
