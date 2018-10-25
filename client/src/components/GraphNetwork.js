@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import ReactLoading from 'react-loading';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import './GraphNetwork.css';
 
 /*const graph = {
   "nodes": [
@@ -69,20 +70,20 @@ class GraphNetwork extends Component {
   }
 
   createGraph(){
-    if(this.props.graph){
-      console.log(this.props.graph);
+    if(this.state.graph){
+      const scaleY = 100;
+      console.log(this.state.graph);
 
-      let nodes = this.props.graph.nodes;
+      let nodes = this.state.graph.nodes;
 
-      var g = d3.select("svg");
-      console.log(g);
+      let g = d3.select("svg");
 
       // links
       this.link = 
         g
           .style("stroke", "#aaa")
           .selectAll("line")
-          .data(this.props.graph.links)
+          .data(this.state.graph.links)
           .enter().append("line");
 
       // nodes
@@ -91,12 +92,31 @@ class GraphNetwork extends Component {
           .append("g")
           .attr("class", "nodes")
           .selectAll("circle")
-          .data(this.props.graph.nodes)
+          .data(this.state.graph.nodes)
           .enter().append("circle")
           .attr("r", function(d, i){return nodes[i].value * 10;})
           .on("click", function(_, i) {
-            this.setState({user: this.props.graph.nodes[i].username}, () => {this.changeRoot();});
+            if(this.state.graph.nodes[i].username !== this.state.user){
+              this.setState({user: this.state.graph.nodes[i].username}, () => {this.changeRoot();});
+            }
           }.bind(this))
+          .on("mouseover", function(d){
+            //var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+            //var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+  
+
+            d3.select("#tooltip")
+						.style("left", d.x + "px")
+						.style("top", (d.y + scaleY)+ "px")
+						.select("#value")
+						.text(d.value);
+
+
+					  d3.select("#tooltip").classed("hidden", false);
+          })
+          .on("mouseout", function() {
+            d3.select("#tooltip").classed("hidden", true);
+           })
           .call(d3.drag()
             .on("start", this.dragstarted)
             .on("drag", this.dragged)
@@ -107,26 +127,45 @@ class GraphNetwork extends Component {
       this.label = g.append("g")
       .attr("class", "labels")
       .selectAll("text")
-      .data(this.props.graph.nodes)
+      .data(this.state.graph.nodes)
       .enter().append("text")
         .attr("class", "label")
         .style("stroke","#fff").style("fill", "#fff").style("color","#fff").style("font-size", "28px")
         .on("click", function(_, i) {
-          this.setState({user: this.props.graph.nodes[i].username}, () => {this.changeRoot();});
+          if(this.state.graph.nodes[i].username !== this.state.user){
+            this.setState({user: this.state.graph.nodes[i].username}, () => {this.changeRoot();});
+          }
         }.bind(this))
+        .on("mouseover", function(d){
+          //var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+          //var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+
+
+          d3.select("#tooltip")
+          .style("left", d.x + "px")
+          .style("top", (d.y + scaleY ) + "px")
+          .select("#value")
+          .text(d.value);
+
+
+          d3.select("#tooltip").classed("hidden", false);
+        })
+        .on("mouseout", function() {
+          d3.select("#tooltip").classed("hidden", true);
+         })
         .text(function(d) { return d.username; });
       
       this.simulation
-        .nodes(this.props.graph.nodes)
+        .nodes(this.state.graph.nodes)
         .on("tick", this.ticked)
 
       this.simulation.force("link")
-        .links(this.props.graph.links);
+        .links(this.state.graph.links);
     }
   }
 
   componentDidMount() {
-    this.setState({graph: this.props.graph}, () => {
+    this.setState({graph: this.state.graph}, () => {
       this.createGraph();
     });
   }
@@ -190,9 +229,14 @@ class GraphNetwork extends Component {
   render() {
     if(this.props.graph){
       return (
-        <svg className="container" id="svg"
-          width={this.props.width} height={this.props.height}>
-        </svg>
+        <div>
+          <svg className="container" id="svg"
+            width={this.props.width} height={this.props.height}>
+          </svg>
+          <div id="tooltip" class="hidden">
+            <b><p id="value">1</p></b>
+          </div>
+        </div>
       );
     } else {
       return <ReactLoading type="spin" width={this.state.minSize /2} height={this.state.minSize /2 } color="#fff" />;
