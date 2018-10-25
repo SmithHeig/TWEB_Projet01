@@ -5,29 +5,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import './GraphNetwork.css';
 
-/*const graph = {
-  "nodes": [
-    {"id": "1"},
-    {"id": "2"},
-    {"id": "4"},
-    {"id": "8"},
-    {"id": "16"},
-    {"id": "11"},
-    {"id": "12"},
-    {"id": "14"},
-    {"id": "18"},
-    {"id": "116"}
-  ],
-  "links": [
-    {"source": "1", "target": "2", "value": 1},
-    {"source": "2", "target": "4", "value": 1},
-    {"source": "4", "target": "8", "value": 1},
-    {"source": "4", "target": "8", "value": 1},
-    {"source": "8", "target": "16", "value": 1},
-    {"source": "16", "target": "1", "value": 1}
-  ]
-}*/
-
 class GraphNetwork extends Component {
 
   constructor(props){
@@ -55,13 +32,9 @@ class GraphNetwork extends Component {
       //.force("charge", d3.forceManyBody().strength(-200))
       .force('charge', d3.forceManyBody()
         .strength(-5000)
-        .theta(0.8)
-        .distanceMax(this.state.minSize)
+        .theta(0.9)
+        .distanceMax(this.state.minSize/2)
       )
-  // 		.force('collide', d3.forceCollide()
-  //       .radius(d => 40)
-  //       .iterations(2)
-  //     )
       .force("center", d3.forceCenter(this.props.width / 2, this.props.height / 2));
   }
 
@@ -72,11 +45,13 @@ class GraphNetwork extends Component {
   createGraph(){
     if(this.state.graph){
       const scaleY = 100;
-      console.log(this.state.graph);
+      const sizeCercle = 10;
+      const width = this.props.width;
+      const height = this.props.height;
 
       let nodes = this.state.graph.nodes;
 
-      let g = d3.select("svg");
+      let g = d3.select("svg").append("g");
 
       // links
       this.link = 
@@ -94,23 +69,18 @@ class GraphNetwork extends Component {
           .selectAll("circle")
           .data(this.state.graph.nodes)
           .enter().append("circle")
-          .attr("r", function(d, i){return nodes[i].value * 10;})
+          .attr("r", function(d, i){return nodes[i].value * sizeCercle;})
           .on("click", function(_, i) {
             if(this.state.graph.nodes[i].username !== this.state.user){
               this.setState({user: this.state.graph.nodes[i].username}, () => {this.changeRoot();});
             }
           }.bind(this))
           .on("mouseover", function(d){
-            //var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
-            //var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
-  
-
             d3.select("#tooltip")
 						.style("left", d.x + "px")
 						.style("top", (d.y + scaleY)+ "px")
 						.select("#value")
 						.text(d.value);
-
 
 					  d3.select("#tooltip").classed("hidden", false);
           })
@@ -137,10 +107,6 @@ class GraphNetwork extends Component {
           }
         }.bind(this))
         .on("mouseover", function(d){
-          //var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
-          //var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
-
-
           d3.select("#tooltip")
           .style("left", d.x + "px")
           .style("top", (d.y + scaleY ) + "px")
@@ -154,13 +120,25 @@ class GraphNetwork extends Component {
           d3.select("#tooltip").classed("hidden", true);
          })
         .text(function(d) { return d.username; });
-      
-      this.simulation
-        .nodes(this.state.graph.nodes)
-        .on("tick", this.ticked)
 
-      this.simulation.force("link")
-        .links(this.state.graph.links);
+      // Zooom
+      var zoom_handler = d3.zoom()
+      .on("zoom", zoom_actions);
+  
+      zoom_handler(g); 
+      
+      function zoom_actions(){
+        g.attr("transform", d3.event.transform)
+      }
+
+      // simulation
+
+      this.simulation
+      .nodes(this.state.graph.nodes)
+      .on("tick", this.ticked)
+
+    this.simulation.force("link")
+      .links(this.state.graph.links);
     }
   }
 
@@ -218,12 +196,12 @@ class GraphNetwork extends Component {
          .style("fill", "#bababa") //efefef
          .style("stroke", "#424242")
          .style("stroke-width", "1px")
-         .attr("cx", function (d) { return d.x+5; })
-         .attr("cy", function(d) { return d.y-9; });
+         .attr("cx", function (d) { return d.x; })
+         .attr("cy", function(d) { return d.y; });
 
     this.label
       .attr("x", function(d) { return d.x; })
-          .attr("y", function (d) { return d.y; });
+      .attr("y", function (d) { return d.y; });
   }
 
   render() {
