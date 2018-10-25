@@ -12,6 +12,7 @@ class Friends extends Component{
 
     this.makeGraphFromData = this.makeGraphFromData.bind(this);
     this.fetchData = this.fetchData.bind(this);
+    this.reload = this.reload.bind(this);
   }
 
   componentDidMount(){
@@ -20,6 +21,10 @@ class Friends extends Component{
 
   componentDidUpdate(){
     //this.fetchData();
+  }
+
+  reload(user){
+    this.setState({username: user, graph: undefined}, () => this.fetchData());
   }
 
   fetchData(){
@@ -80,7 +85,7 @@ class Friends extends Component{
          width={window.innerWidth}
          height={window.innerHeight - 200}
          graph={this.state.graph}
-         reload={this.fetchData}
+         reload={this.reload}
         ></GraphNetwork>
       </div>
     )

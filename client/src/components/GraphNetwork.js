@@ -69,12 +69,13 @@ class GraphNetwork extends Component {
   }
 
   createGraph(){
-    console.log(this.props.graph);
     if(this.props.graph){
+      console.log(this.props.graph);
 
       let nodes = this.props.graph.nodes;
 
       var g = d3.select("svg");
+      console.log(g);
 
       // links
       this.link = 
@@ -95,7 +96,6 @@ class GraphNetwork extends Component {
           .attr("r", function(d, i){return nodes[i].value * 10;})
           .on("click", function(_, i) {
             this.setState({user: this.props.graph.nodes[i].username}, () => {this.changeRoot();});
-            
           }.bind(this))
           .call(d3.drag()
             .on("start", this.dragstarted)
@@ -111,6 +111,9 @@ class GraphNetwork extends Component {
       .enter().append("text")
         .attr("class", "label")
         .style("stroke","#fff").style("fill", "#fff").style("color","#fff").style("font-size", "28px")
+        .on("click", function(_, i) {
+          this.setState({user: this.props.graph.nodes[i].username}, () => {this.changeRoot();});
+        }.bind(this))
         .text(function(d) { return d.username; });
       
       this.simulation
@@ -136,10 +139,10 @@ class GraphNetwork extends Component {
     }
   }
 
-  changeRoot(){
-    d3.select("svg").remove(); // remove current graph
+  changeRoot(){ 
+    this.props.reload(this.state.user);
+
     const path = "/friends/" + this.state.user;
-    this.props.reload();
     this.props.history.push(path);
   }
 

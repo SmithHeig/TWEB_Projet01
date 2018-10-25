@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
+import { Route, BrowserRouter as Router } from 'react-router-dom'
 import App from './App';
 import Friends from "./components/Friends";
 
@@ -10,10 +10,8 @@ import Friends from "./components/Friends";
 const routing = (
   <Router>
     <div className="App-body">
-      <Switch>
         <Route exact path="/" component={App} />
         <Route path="/friends/:username" component={Friends} />
-      </Switch>
     </div>
   </Router>
 )
