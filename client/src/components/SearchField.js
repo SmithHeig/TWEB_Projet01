@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import './SearchField.css'
-import Link from 'react-router-dom/Link';
+import { withRouter } from 'react-router-dom';
 
 // Need CSS from SearchUser.css
 class SearchUser extends React.Component {
@@ -9,10 +9,16 @@ class SearchUser extends React.Component {
     super(props);
     this.state = {username: ''};
     this.handleChange = this.handleChange.bind(this);
+    this.changeRoot = this.changeRoot.bind(this);
   }
 
   handleChange(event) {
     this.setState({username: event.target.value});
+  }
+
+  changeRoot(){
+    const path = "/friends/" + this.state.username;
+    this.props.history.push(path);
   }
 
   render(){
@@ -28,15 +34,13 @@ class SearchUser extends React.Component {
                 onChange={this.handleChange}
             />
             <br/>
-            <Link to={"/friends/" + this.state.username}>
-              <Button id="searchButton" className="searchButton" variant="contained" color="primary" >
-                Search
-              </Button>
-            </Link>
+            <Button id="searchButton" className="searchButton" variant="contained" color="primary" onClick={this.changeRoot}>
+              Search
+            </Button>
         </form>
       </div>
     )
   }
 };
 
-export default SearchUser;
+export default withRouter(SearchUser);

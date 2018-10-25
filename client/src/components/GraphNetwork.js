@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import ReactLoading from 'react-loading';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 /*const graph = {
   "nodes": [
@@ -35,7 +37,9 @@ class GraphNetwork extends Component {
 
 
     this.state = {
-      minSize: this.props.height > this.props.width ? this.props.width : this.props.height
+      graph: undefined,
+      minSize: this.props.height > this.props.width ? this.props.width : this.props.height,
+      user: ""
     }
 
     this.dragstarted = this.dragstarted.bind(this);
@@ -43,6 +47,7 @@ class GraphNetwork extends Component {
     this.dragged = this.dragged.bind(this);
     this.ticked = this.ticked.bind(this);
     this.createGraph = this.createGraph.bind(this);
+    this.changeRoot = this.changeRoot.bind(this);
 
     this.simulation = d3.forceSimulation()
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
@@ -59,11 +64,26 @@ class GraphNetwork extends Component {
       .force("center", d3.forceCenter(this.props.width / 2, this.props.height / 2));
   }
 
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
   createGraph(){
+    console.log(this.props.graph);
     if(this.props.graph){
+
       let nodes = this.props.graph.nodes;
-      console.log(this.props.graph);
+
       var g = d3.select("svg");
+
+      // links
+      this.link = 
+        g
+          .style("stroke", "#aaa")
+          .selectAll("line")
+          .data(this.props.graph.links)
+          .enter().append("line");
+
       // nodes
       this.node = 
         g
@@ -73,18 +93,15 @@ class GraphNetwork extends Component {
           .data(this.props.graph.nodes)
           .enter().append("circle")
           .attr("r", function(d, i){return nodes[i].value * 10;})
+          .on("click", function(_, i) {
+            this.setState({user: this.props.graph.nodes[i].username}, () => {this.changeRoot();});
+            
+          }.bind(this))
           .call(d3.drag()
             .on("start", this.dragstarted)
             .on("drag", this.dragged)
             .on("end", this.dragended));
         
-      // links
-      this.link = 
-        g
-          .style("stroke", "#aaa")
-          .selectAll("line")
-          .data(this.props.graph.links)
-          .enter().append("line");
 
       // labels
       this.label = g.append("g")
@@ -93,6 +110,7 @@ class GraphNetwork extends Component {
       .data(this.props.graph.nodes)
       .enter().append("text")
         .attr("class", "label")
+        .style("stroke","#fff").style("fill", "#fff").style("color","#fff").style("font-size", "28px")
         .text(function(d) { return d.username; });
       
       this.simulation
@@ -105,12 +123,24 @@ class GraphNetwork extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.graph);
-    this.createGraph();
+    this.setState({graph: this.props.graph}, () => {
+      this.createGraph();
+    });
   }
 
   componentDidUpdate(){
-    this.createGraph();
+    if(this.props.graph !== this.state.graph){
+      this.setState({graph: this.props.graph}, () => {
+        this.createGraph();
+      });
+    }
+  }
+
+  changeRoot(){
+    d3.select("svg").remove(); // remove current graph
+    const path = "/friends/" + this.state.user;
+    this.props.reload();
+    this.props.history.push(path);
   }
 
   dragstarted(d) {
@@ -143,7 +173,7 @@ class GraphNetwork extends Component {
         .attr("y2", function(d) { return d.target.y; });
 
     this.node
-         .style("fill", "#efefef")
+         .style("fill", "#bababa") //efefef
          .style("stroke", "#424242")
          .style("stroke-width", "1px")
          .attr("cx", function (d) { return d.x+5; })
@@ -151,8 +181,7 @@ class GraphNetwork extends Component {
 
     this.label
       .attr("x", function(d) { return d.x; })
-          .attr("y", function (d) { return d.y; })
-          .style("font-size", "10px").style("fill", "#333");
+          .attr("y", function (d) { return d.y; });
   }
 
   render() {
@@ -169,4 +198,4 @@ class GraphNetwork extends Component {
   }
 }
 
-export default GraphNetwork;
+export default withRouter(GraphNetwork);

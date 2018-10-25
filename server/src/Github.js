@@ -35,7 +35,6 @@ class Github {
             if (!res.ok) {
               throw new ResponseError(res, data);
             }
-  
             return data;
           }));
     }

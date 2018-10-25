@@ -10,20 +10,27 @@ class Friends extends Component{
       graph: undefined
     }
 
-    this.ref = React.createRef();
-
     this.makeGraphFromData = this.makeGraphFromData.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount(){
+    this.fetchData();
+  }
+
+  componentDidUpdate(){
+    //this.fetchData();
+  }
+
+  fetchData(){
     const path = 'http://localhost:4000/friends/' + this.state.username;
     fetch(path)
       .then(results => {return results.json();})
       .then(data => {
         let graph = this.makeGraphFromData(data, this.state.username);
         this.setState({graph});
-        console.log(this.state.graph);
-      });
+      })
+      .catch(erreur => console.log("Erreur: " + erreur));
   }
 
   makeGraphFromData(collab, username){
@@ -68,11 +75,12 @@ class Friends extends Component{
   render(){
     return (
       <div>
-        <h1 ref={this.ref}>Friends</h1>
+        <h1>Friends</h1>
         <GraphNetwork
          width={window.innerWidth}
          height={window.innerHeight - 200}
          graph={this.state.graph}
+         reload={this.fetchData}
         ></GraphNetwork>
       </div>
     )
