@@ -29,4 +29,6 @@ To do so: `settings`-> `Developer settings`->`Personal access tokens`-> `Generat
 
 ## Run
 
-Run the `run.sh` script. This will run the app in Docker containers
+Run the `run.sh` script. This will run the app in Docker containers.
+
+Be sure that the port `4000`and `80` are available.

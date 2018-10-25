@@ -14,7 +14,7 @@ class App extends Component {
       <div className="App">
         <header className="App-body">
           <h1>Github Friends</h1>
-          <h2>Learn who work the most on your repositories</h2>
+          <h2>Find out who works the most on your repositories</h2>
           <SearchField/>
         </header>
       </div>
