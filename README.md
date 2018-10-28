@@ -9,7 +9,7 @@ This application is split in two part, the `frontend` and the `API`
 
 The `frontend` is a react with material-ui application.
 
-The `API` is an express server who execute request on the github API and treat the data to be fetch by a client.
+The `API` is an express server who execute request on the github API and treat the data to be fetch by a client. The `API` do some request on the `Github API`.
 
 ## Install
 
@@ -33,7 +33,7 @@ Run the `run.sh` script. This will run the app in Docker containers.
 
 Be sure that the port `4000`and `80` are available. 
 
-You can access to the application on linux at: http://localhost and on http://192.168.99.104 (docker ip)
+You can access to the application on linux at: http://localhost or on http://192.168.99.104 (docker ip)
 
 ## Production
 
