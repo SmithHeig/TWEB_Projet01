@@ -7,14 +7,16 @@ import SearchField from './SearchField';
 import {Link} from 'react-router-dom';
 import "./Friends.css";
 
+
 class Friends extends Component{
   constructor({match},props){
-    super(match, props);
+    super({match}, props);
     this.state = {
       username: match.params.username,
       collaborators: {},
       graph: undefined,
-      searchFieldVisibile: false
+      searchFieldVisibile: false,
+      status: 200
     }
 
     this.makeGraphFromData = this.makeGraphFromData.bind(this);
@@ -42,9 +44,17 @@ class Friends extends Component{
   }
 
   fetchData(){
-    const path = 'http://localhost:4000/friends/' + this.state.username;
+    const api = process.env.REACT_APP_API;
+    const path = api + '/friends/' + this.state.username;
     fetch(path)
-      .then(results => {return results.json();})
+      .then(results => {
+        if(results.status === 200){
+          return results.json();
+        } else {
+          this.setState({status: 400});
+          return {};
+        }
+      })
       .then(data => {
         let graph = this.makeGraphFromData(data, this.state.username);
         this.setState({graph});
@@ -99,20 +109,19 @@ class Friends extends Component{
     return (
       <div>
         <div>
-          
           <h1><Link to="/" id="link">Friends</Link>
-            <Tooltip title={this.textInfo} placement="bottum" className="info" ><IconButton style={{color: 'white'}}><Info id="info" /></IconButton></Tooltip>
+            <Tooltip title={this.textInfo} placement="bottom" ><IconButton style={{color: 'white'}}><Info id="info" /></IconButton></Tooltip>
             <Tooltip title="New research"><IconButton style={{color: 'white'}} onClick={this.showSearchBar}><Search/></IconButton></Tooltip>
           </h1>
-
-          {this.state.searchFieldVisibile ? <SearchField/>: null}
+          {this.state.searchFieldVisibile ? <SearchField reload={this.reload}/>: null}
         </div>
-        <GraphNetwork
+        {this.state.status === 200? <GraphNetwork
          width={window.innerWidth}
          height={window.innerHeight - 200}
          graph={this.state.graph}
          reload={this.reload}
-        ></GraphNetwork>
+        ></GraphNetwork> 
+        : <div><h2>Bad Request</h2><p>{this.state.username} does not exist or has no repo</p></div>}
       </div>
     )
   }; 

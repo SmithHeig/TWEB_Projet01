@@ -15,7 +15,7 @@ The `API` is an express server who execute request on the github API and treat t
 
 Run the `install.sh` script
 
-```
+```bash
 sh install.sh
 ```
 
@@ -27,8 +27,22 @@ You need to replace the: `OAUTH_TOKEN=xxx` With a personnel token generate on yo
 
 To do so: `settings`-> `Developer settings`->`Personal access tokens`-> `Generate new toker`
 
-## Run
+## Run in local
 
 Run the `run.sh` script. This will run the app in Docker containers.
 
-Be sure that the port `4000`and `80` are available.
+Be sure that the port `4000`and `80` are available. 
+
+You can access to the application on linux at: http://localhost and on http://192.168.99.104 (docker ip)
+
+## Production
+
+This web site is host on heroku at the address: https://githubfriendsfrontend.herokuapp.com
+
+You can access to the api by this link: https://githubfriends.herokuapp.com
+
+## Next steps
+
+- Adding new perspectives. (more line of code added to your repositories, etc)
+- Adding images (favicon, home page)
+- Optimized for mobile phone

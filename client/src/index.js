@@ -2,16 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { Route, BrowserRouter as Router } from 'react-router-dom'
+import { Route, BrowserRouter as Router } from 'react-router-dom';
+import createHistory from 'history/createBrowserHistory';
 import App from './App';
 import Friends from "./components/Friends";
+require('dotenv').config();
 
+const history = createHistory();
 
 const routing = (
-  <Router>
+  <Router basehistory={history} basename={process.env.PUBLIC_URL}>
     <div className="App-body">
         <Route exact path="/" component={App} />
-        <Route path="/friends/:username" component={Friends} />
+        <Route exact path="/friends/:username" component={Friends} />
     </div>
   </Router>
 )

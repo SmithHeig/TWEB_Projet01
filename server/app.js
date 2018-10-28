@@ -10,16 +10,16 @@ const client = new Github({ token: process.env.OAUTH_TOKEN })
 
 app.use(cors());
 
-app.get('/users/:username', (req, res, next) => {
-    client.user(req.param.username)
-        .then(user => res.send(user))
-        .catch(next);
-});
-
 app.get('/friends/:username', (req, res, next) => {
     client.friends(req.params.username)
         .then(utils.getUserFriends)
-        .then(friends => res.send(friends))
+        .then(friends => {
+            if(Object.keys(friends).length){
+                res.send(friends)
+            } else {
+                res.status(400).send('Bad Request');
+            }
+        })
         .catch(next)
 });
 
@@ -42,3 +42,5 @@ app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(`Server listening at http://localhost:${port}`);
 });
+
+module.exports = app;
